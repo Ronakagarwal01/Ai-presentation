@@ -1,0 +1,18 @@
+# Assets to ignore when deploying to Cloudflare Workers / Pages
+node_modules/**
+.git/**
+.github/**
+.vscode/**
+*.ipynb
+*.py
+*.pyc
+requirements*.txt
+package.json
+package-lock.json
+CLOUDFLARE_DEPLOYMENT.md
+README.md
+__pycache__/**
+gpt_agentic_env/**
+video_demo.mp4
+video_frames/**
+.env*

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winners Creek — Presentation Simulator</title>
+  <meta name="description" content="AI-powered Presentation Simulator. Practice, perform, get evaluated, and improve your presentation skills with real-time feedback.">
+  <link rel="stylesheet" href="presentation.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP NAVBAR
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="navbar" id="main-navbar">
+    <div class="nav-inner">
+      <a href="presentation.html" class="nav-brand">
+        <span class="brand-icon">🎓</span>
+        <span class="brand-name">Winners Creek</span>
+        <span class="brand-sub">Simulation Lab</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#" class="nav-link active" id="nav-overview">Overview</a>
+        <a href="#" class="nav-link" id="nav-history">History</a>
+        <a href="index.html" class="nav-link" id="nav-suite" style="color:var(--accent-primary); font-weight:600;">⚡ AI Suite</a>
+      </nav>
+      <div class="nav-right">
+        <div class="user-badge" id="user-badge">
+          <span id="user-display-name">Student</span> · <span class="user-role">student</span>
+        </div>
+        <button class="icon-btn" id="theme-toggle" title="Toggle dark mode">🌙</button>
+        <button class="text-btn" id="sign-out-btn">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 0: LANDING
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen active" id="screen-landing">
+    <div class="landing-container">
+      <div class="landing-badge">WINNERS CREEK</div>
+      <h1 class="landing-title">Practice. Perform. Get evaluated. Improve.</h1>
+      <p class="landing-desc">The AI Soft Skills Simulation Lab puts you inside a realistic presentation and interview assessment — then tells you exactly what to work on next.</p>
+      <button class="btn-primary btn-lg" id="enter-lab-btn">
+        <span>▶</span> Enter Simulation Lab
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 1: DASHBOARD
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-dashboard">
+    <div class="container">
+      <!-- Stats Cards Row -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">TOTAL SIMULATIONS</div>
+          <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">PRESENTATIONS</div>
+          <div class="stat-value" id="stat-presentations">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">INTERVIEWS</div>
+          <div class="stat-value" id="stat-interviews">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AVERAGE SCORE</div>
+          <div class="stat-value" id="stat-avg-score">—</div>
+          <div class="stat-sub" id="stat-avg-sub">Scoring arrives in Phase 3</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">BEST SCORE</div>
+          <div class="stat-value" id="stat-best-score"><span class="score-bar-mini"></span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">PRACTICE STREAK</div>
+          <div class="stat-value" id="stat-streak">0d</div>
+        </div>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="sessions-header">
+        <h2 class="section-title">Recent Sessions</h2>
+        <a href="#" class="view-all-link">View all</a>
+      </div>
+      <div class="sessions-list" id="sessions-list">
+        <div class="empty-state">
+          <span class="empty-icon">📋</span>
+          <p>No sessions yet. Start your first presentation!</p>
+        </div>
+      </div>
+
+      <!-- New Session CTA -->
+      <div class="new-session-cta">
+        <button class="btn-primary btn-lg" id="new-presentation-btn">
+          <span>🎤</span> New Presentation Session
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 2: SETUP WIZARD
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-setup">
+    <div class="container container-narrow">
+      <div class="setup-header">
+        <div class="setup-badge">PRESENTATION SIMULATOR</div>
+        <h2 class="setup-title">Set up your session</h2>
+      </div>
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <div class="step active" id="step-1-indicator">
+          <div class="step-circle">1</div>
+          <span class="step-label">Setup</span>
+        </div>
+        <div class="step-line" id="step-line-1"></div>
+        <div class="step" id="step-2-indicator">
+          <div class="step-circle">2</div>
+          <span class="step-label">Upload</span>
+        </div>
+        <div class="step-line" id="step-line-2"></div>
+        <div class="step" id="step-3-indicator">
+          <div class="step-circle">3</div>
+          <span class="step-label">Review</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Setup Details -->
+      <div class="wizard-step active" id="wizard-step-1">
+        <div class="wizard-card">
+          <div class="form-group">
+            <label class="form-label">Presentation title</label>
+            <input type="text" class="form-input" id="pres-title" placeholder="e.g. Q3 Product Review">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Presentation type</label>
+            <div class="chip-group" id="pres-type-group">
+              <button class="chip active" data-value="Academic">Academic</button>
+              <button class="chip" data-value="Technical">Technical</button>
+              <button class="chip" data-value="Project">Project</button>
+              <button class="chip" data-value="Business">Business</button>
+              <button class="chip" data-value="Seminar">Seminar</button>
+              <button class="chip" data-value="Placement">Placement</button>
+              <button class="chip" data-value="Pitch">Pitch</button>
+              <button class="chip" data-value="Other">Other</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Audience</label>
+            <div class="chip-group" id="pres-audience-group">
+              <button class="chip active" data-value="Students">Students</button>
+              <button class="chip" data-value="Faculty">Faculty</button>
+              <button class="chip" data-value="Recruiters">Recruiters</button>
+              <button class="chip" data-value="Technical Panel">Technical Panel</button>
+              <button class="chip" data-value="Management">Management</button>
+              <button class="chip" data-value="General Audience">General Audience</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Duration</label>
+            <div class="chip-group" id="pres-duration-group">
+              <button class="chip" data-value="2">2 min</button>
+              <button class="chip active" data-value="5">5 min</button>
+              <button class="chip" data-value="10">10 min</button>
+              <button class="chip" data-value="15">15 min</button>
+              <div class="custom-duration-wrap">
+                <input type="number" class="form-input form-input-sm" id="custom-duration" placeholder="Custom (min)" min="1" max="60">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Evaluation mode</label>
+            <div class="eval-mode-group" id="pres-eval-group">
+              <div class="eval-option active" data-value="Practice">
+                <div class="eval-title">Practice</div>
+                <div class="eval-desc">Full AI hints, no pressure — build the habit.</div>
+              </div>
+              <div class="eval-option" data-value="Assessment">
+                <div class="eval-title">Assessment</div>
+                <div class="eval-desc">Timed and scored like a real evaluation.</div>
+              </div>
+              <div class="eval-option" data-value="Placement Simulation">
+                <div class="eval-title">Placement Simulation</div>
+                <div class="eval-desc">Assessment rules plus anti-cheating safeguards, as in a real placement round.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Upload Slides -->
+      <div class="wizard-step" id="wizard-step-2">
+        <div class="wizard-card">
+          <label class="form-label">Upload your slides</label>
+          <div class="dropzone" id="slide-dropzone">
+            <div class="dropzone-icon">📤</div>
+            <div class="dropzone-title">Drag and drop your presentation, or click to browse</div>
+            <div class="dropzone-sub">PDF or PPTX, up to 1GB</div>
+            <input type="file" id="slide-file-input" accept=".pdf,.pptx,.ppt" style="display:none;">
+          </div>
+
+          <!-- Uploaded File Badge -->
+          <div class="file-badge hidden" id="slide-file-badge">
+            <div class="file-badge-icon">📄</div>
+            <div class="file-badge-info">
+              <div class="file-badge-name" id="slide-file-name">presentation.pdf</div>
+              <div class="file-badge-size" id="slide-file-size">2.1 MB</div>
+            </div>
+            <button class="file-badge-remove" id="slide-file-remove" title="Remove file">×</button>
+          </div>
+
+          <div class="upload-notice">
+            <span>⚠️</span>
+            Your file is converted to slide images and text on our server so the simulator can show it back to you — it is stored privately and only visible to you and your trainer.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Review -->
+      <div class="wizard-step" id="wizard-step-3">
+        <div class="wizard-card">
+          <div class="review-table">
+            <div class="review-row">
+              <span class="review-label">Title</span>
+              <span class="review-value" id="review-title">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-label">Type</span>
+              <span class="review-value" id="review-type">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-label">Audience</span>
+              <span class="review-value" id="review-audience">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-label">Duration</span>
+              <span class="review-value" id="review-duration">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-label">Evaluation mode</span>
+              <span class="review-value" id="review-eval">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-label">File</span>
+              <span class="review-value" id="review-file">—</span>
+            </div>
+          </div>
+
+          <!-- Processing indicator -->
+          <div class="processing-bar hidden" id="processing-bar">
+            <div class="processing-fill" id="processing-fill"></div>
+          </div>
+          <div class="processing-text hidden" id="processing-text">Processing your slides...</div>
+        </div>
+      </div>
+
+      <!-- Wizard Navigation -->
+      <div class="wizard-nav">
+        <button class="btn-ghost" id="wizard-back-btn">
+          <span>‹</span> Back
+        </button>
+        <button class="btn-primary" id="wizard-next-btn">
+          Continue <span>›</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 3: SESSION PREVIEW
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-preview">
+    <div class="container">
+      <a href="#" class="back-link" id="back-to-dashboard">‹ Simulation Lab</a>
+      <div class="preview-header">
+        <h2 class="preview-title" id="preview-session-title">Presentation Title</h2>
+        <div class="preview-tags">
+          <span class="tag" id="preview-tag-type">Academic</span>
+          <span class="tag" id="preview-tag-audience">Students</span>
+          <span class="tag tag-accent" id="preview-tag-eval">practice</span>
+        </div>
+      </div>
+
+      <div class="preview-grid">
+        <!-- Left: Slide Thumbnails -->
+        <div class="slide-thumbnails" id="slide-thumbnails">
+          <!-- Dynamically filled -->
+        </div>
+
+        <!-- Center: Main Slide Viewer -->
+        <div class="main-slide-viewer">
+          <div class="slide-display" id="main-slide-display">
+            <div class="slide-placeholder">Upload slides to preview</div>
+          </div>
+          <div class="slide-nav">
+            <button class="slide-nav-btn" id="preview-prev-btn">‹ Previous</button>
+            <span class="slide-counter" id="preview-slide-counter">1 / 1</span>
+            <button class="slide-nav-btn" id="preview-next-btn">Next ›</button>
+          </div>
+        </div>
+
+        <!-- Right: Stats & Script -->
+        <div class="preview-sidebar">
+          <div class="sidebar-stats">
+            <div class="stat-box">
+              <div class="stat-box-label">SLIDES</div>
+              <div class="stat-box-value" id="preview-slide-count">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">TARGET</div>
+              <div class="stat-box-value" id="preview-target-time">05:00</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">EST. SPEAKING</div>
+              <div class="stat-box-value" id="preview-est-speaking">—</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">PACE</div>
+              <div class="stat-box-value" id="preview-pace">Steady</div>
+            </div>
+          </div>
+
+          <div class="script-section">
+            <h4 class="script-title">Script</h4>
+            <div class="script-options">
+              <div class="script-option" data-value="ai">Use AI script</div>
+              <div class="script-option" data-value="own">Use my own notes</div>
+              <div class="script-option active" data-value="none">No script</div>
+            </div>
+          </div>
+
+          <button class="btn-primary btn-lg btn-start" id="start-presentation-btn">
+            <span>▶</span> Start Presentation
+          </button>
+        </div>
+      </div>
+
+      <!-- Presentation Brief -->
+      <div class="pres-brief" id="pres-brief">
+        <div class="brief-header">
+          <span class="brief-icon">⚙️</span>
+          <span class="brief-title">Presentation brief</span>
+          <span class="brief-tag">structural</span>
+        </div>
+        <p class="brief-text" id="brief-text">Loading presentation analysis...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 4: CAMERA READY
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-camera-ready">
+    <div class="camera-ready-container">
+      <div class="camera-ready-header">
+        <span class="session-name" id="camera-session-name">Session</span>
+        <span class="session-mode-tag" id="camera-mode-tag">practice</span>
+        <span class="camera-timer">00:00 / <span id="camera-target-time">05:00</span></span>
+        <div class="camera-controls-top">
+          <button class="icon-btn" id="camera-toggle-btn" title="Toggle camera">📷</button>
+          <button class="icon-btn" id="mic-toggle-btn" title="Toggle microphone">🎤</button>
+          <button class="icon-btn" id="fullscreen-btn" title="Fullscreen">⛶</button>
+        </div>
+      </div>
+
+      <div class="camera-preview-area">
+        <video id="camera-video" autoplay muted playsinline></video>
+        <div class="camera-fallback" id="camera-fallback">
+          <span class="camera-fallback-icon">📷</span>
+          <p>Camera not available</p>
+        </div>
+      </div>
+
+      <h3 class="camera-ready-title">Ready when you are</h3>
+      <p class="camera-ready-desc"><span id="camera-slide-count">0</span> slides loaded. You'll get a 3-second countdown, then your timer, transcript and recording begin.</p>
+      <p class="camera-privacy">⚠️ Camera and microphone are on — your video is stored privately and visible only to you and your trainer.</p>
+
+      <button class="btn-primary btn-lg btn-start-pres" id="begin-presentation-btn">
+        <span>▶</span> Start Presentation
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 5: COUNTDOWN
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-countdown">
+    <div class="countdown-container">
+      <div class="countdown-number" id="countdown-number">3</div>
+      <p class="countdown-text">Get ready...</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 6: LIVE PRESENTATION
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-live">
+    <div class="live-header">
+      <div class="live-left">
+        <span class="session-name" id="live-session-name">Session</span>
+        <span class="session-mode-tag" id="live-mode-tag">practice</span>
+      </div>
+      <div class="live-timer-display">
+        <span class="live-timer" id="live-timer">00:00</span>
+        <span class="live-timer-sep">/</span>
+        <span class="live-timer-target" id="live-timer-target">05:00</span>
+      </div>
+      <div class="live-controls-top">
+        <button class="icon-btn" id="live-camera-btn" title="Toggle camera">📷</button>
+        <button class="icon-btn" id="live-mic-btn" title="Toggle microphone">🎤</button>
+        <button class="icon-btn" id="live-fullscreen-btn" title="Fullscreen">⛶</button>
+      </div>
+    </div>
+
+    <div class="live-grid">
+      <!-- Main slide area -->
+      <div class="live-slide-area">
+        <div class="live-slide-display" id="live-slide-display">
+          <!-- Current slide rendered here -->
+        </div>
+
+        <!-- Camera-in-Picture -->
+        <div class="live-camera-pip" id="live-camera-pip">
+          <video id="live-camera-video" autoplay muted playsinline></video>
+        </div>
+
+        <!-- Slide Navigation -->
+        <div class="live-slide-nav">
+          <button class="slide-nav-btn" id="live-prev-btn">‹ Prev slide</button>
+          <span class="slide-counter" id="live-slide-counter">Slide 1 / 1</span>
+          <button class="slide-nav-btn" id="live-next-btn">Next slide ›</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="live-actions">
+          <button class="btn-ghost btn-action" id="live-pause-btn">⏸ Pause</button>
+          <button class="btn-danger btn-action" id="live-end-btn">⏹ End Presentation</button>
+        </div>
+      </div>
+
+      <!-- Right Panel: Performance + Transcript -->
+      <div class="live-sidebar">
+        <div class="performance-panel">
+          <h4 class="panel-title">Live Performance</h4>
+          <div class="perf-stat">
+            <span class="perf-label">Words spoken</span>
+            <span class="perf-value" id="perf-words">0</span>
+          </div>
+          <div class="perf-stat">
+            <span class="perf-label">Pace (WPM)</span>
+            <span class="perf-value" id="perf-wpm">0</span>
+          </div>
+          <div class="perf-stat">
+            <span class="perf-label">Fillers detected</span>
+            <span class="perf-value" id="perf-fillers">0</span>
+          </div>
+        </div>
+
+        <div class="transcript-panel">
+          <h4 class="panel-title">LIVE TRANSCRIPT</h4>
+          <div class="transcript-content" id="transcript-content">
+            <p class="transcript-placeholder">Transcript will appear as you speak...</p>
+          </div>
+        </div>
+
+        <div class="recording-status">
+          <span class="rec-dot"></span> Recording: camera + mic
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCREEN 7: AI REPORT
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="screen" id="screen-report">
+    <div class="container">
+      <div class="report-header">
+        <h2 class="report-title">🎯 Presentation Report</h2>
+        <p class="report-subtitle" id="report-session-title">Session Title</p>
+        <div class="report-tags" id="report-tags"></div>
+      </div>
+
+      <!-- Overall Score -->
+      <div class="report-score-hero">
+        <div class="score-ring" id="report-score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" class="ring-bg"/>
+            <circle cx="60" cy="60" r="52" class="ring-fill" id="report-ring-fill"/>
+          </svg>
+          <div class="ring-value" id="report-overall-score">—</div>
+        </div>
+        <div class="score-verdict">
+          <h3 id="report-verdict-title">Evaluating...</h3>
+          <p id="report-verdict-desc">AI is analyzing your presentation...</p>
+        </div>
+      </div>
+
+      <!-- Performance Stats -->
+      <div class="report-stats-row">
+        <div class="report-stat-card">
+          <div class="rstat-icon">⏱️</div>
+          <div class="rstat-value" id="report-duration">—</div>
+          <div class="rstat-label">Duration</div>
+        </div>
+        <div class="report-stat-card">
+          <div class="rstat-icon">💬</div>
+          <div class="rstat-value" id="report-words">—</div>
+          <div class="rstat-label">Words Spoken</div>
+        </div>
+        <div class="report-stat-card">
+          <div class="rstat-icon">🏃</div>
+          <div class="rstat-value" id="report-wpm">—</div>
+          <div class="rstat-label">Avg WPM</div>
+        </div>
+        <div class="report-stat-card">
+          <div class="rstat-icon">🔇</div>
+          <div class="rstat-value" id="report-fillers">—</div>
+          <div class="rstat-label">Fillers</div>
+        </div>
+        <div class="report-stat-card">
+          <div class="rstat-icon">📊</div>
+          <div class="rstat-value" id="report-slides-used">—</div>
+          <div class="rstat-label">Slides Covered</div>
+        </div>
+      </div>
+
+      <!-- Dimension Scores -->
+      <div class="report-dimensions" id="report-dimensions">
+        <h3 class="report-section-title">📊 Multi-Dimensional Evaluation</h3>
+        <div class="dimension-grid" id="dimension-grid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- AI Feedback -->
+      <div class="report-feedback">
+        <h3 class="report-section-title">🧠 AI Feedback & Analysis</h3>
+        <div class="feedback-box" id="report-feedback-box">
+          <div class="feedback-loading">
+            <div class="spinner"></div>
+            <p>AI is generating your detailed feedback...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problems Identified -->
+      <div class="report-problems">
+        <h3 class="report-section-title">⚠️ Problems Identified in Presentation</h3>
+        <div class="problems-list" id="report-problems-list">
+          <div class="feedback-loading">
+            <div class="spinner"></div>
+            <p>Analyzing presentation issues...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transcript -->
+      <div class="report-transcript">
+        <h3 class="report-section-title">📝 Full Transcript</h3>
+        <div class="transcript-box" id="report-transcript-box">
+          <p class="transcript-placeholder">No transcript recorded.</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="report-actions">
+        <button class="btn-primary btn-lg" id="report-new-session-btn">🎤 New Session</button>
+        <button class="btn-ghost btn-lg" id="report-dashboard-btn">← Back to Dashboard</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 Winners Creek Simulation Lab • AI-Powered Presentation Training</p>
+  </footer>
+
+  <script src="presentation.js"></script>
+</body>
+</html>

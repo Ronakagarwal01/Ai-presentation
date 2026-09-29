@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic AI Suite — Cloudflare Edition</title>
+  <meta name="description" content="State-of-the-art Agentic AI Suite powered by Llama 3.3 and LangGraph. Evaluates assessments, generates adaptive study plans, calculates ATS resume scores from uploaded documents, and performs grounded RAG queries.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- PDF & Document Text Extractors (Client-Side for Cloudflare Pages) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-logo">
+        <div class="logo-icon">⚡</div>
+        <div class="brand-text">
+          <h1>Agentic AI Suite</h1>
+          <span>LangGraph & Llama 3.3 Engine</span>
+        </div>
+      </a>
+      
+      <div class="nav-actions">
+        <div class="status-badge" id="model-status-badge">
+          <span class="pulse-dot"></span>
+          <span id="active-model-name">Llama-3.3-70B Active</span>
+        </div>
+        <button class="btn-secondary" id="open-settings-btn" title="Configure API Tokens">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          API Settings
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Module Selector Navigation Tabs -->
+  <nav class="module-tabs-wrapper">
+    <div class="tabs-container">
+      <button class="tab-btn active" data-target="module-assessment" id="tab-btn-assessment">
+        <span>📊</span> Assessment Evaluator
+        <span class="tab-badge">6-D Scoring</span>
+      </button>
+      <button class="tab-btn" data-target="module-recommendation" id="tab-btn-recommender">
+        <span>🎯</span> 7-Day Recommender
+        <span class="tab-badge">Study Plan</span>
+      </button>
+      <button class="tab-btn" data-target="module-ats" id="tab-btn-ats">
+        <span>📄</span> ATS Resume Scorer
+        <span class="tab-badge">Document Upload</span>
+      </button>
+      <button class="tab-btn" data-target="module-rag" id="tab-btn-rag">
+        <span>🧠</span> RAG Knowledge Assistant
+        <span class="tab-badge">Doc Indexing</span>
+      </button>
+      <a href="presentation.html" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(30,64,175,0.12)); border-color:#bfdbfe;" target="_blank">
+        <span>🎤</span> Presentation Simulator
+        <span class="tab-badge" style="background:#2563eb; color:#ffffff;">Live Lab</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+
+    <!-- =========================================================================
+         Module 1: Assessment Scoring & Feedback
+         ========================================================================= -->
+    <section class="module-section active" id="module-assessment">
+      <div class="section-header">
+        <div class="header-badge">LangGraph Evaluation Pipeline</div>
+        <h2 class="section-title">Assessment Scoring & Evidence-Based Feedback</h2>
+        <p class="section-subtitle">Scores learner responses across six core dimensions (Accuracy, Completeness, Reasoning, Communication, Evidence, Professionalism) and generates actionable growth advice.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Input Panel -->
+        <div class="card">
+          <h3 class="card-title"><span>📝</span> Test Prompt & Learner Response</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="assess-question">Diagnostic Question / Problem Statement</label>
+            <textarea class="form-textarea" id="assess-question" rows="3" placeholder="Enter assessment question...">Explain the difference between supervised and unsupervised learning, providing real-world examples for each.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="assess-response">Learner's Submitted Response</label>
+            <textarea class="form-textarea" id="assess-response" rows="6" placeholder="Enter candidate's response...">Supervised learning uses labeled datasets to train models for prediction, such as email spam filtering or house price regression. In contrast, unsupervised learning discovers hidden patterns and natural clusters in unlabeled data, like customer segmentation in e-commerce.</textarea>
+          </div>
+
+          <div class="quick-fill-bar">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Presets:</span>
+            <button class="quick-btn" id="preset-ml-btn">ML Supervised vs Unsupervised</button>
+            <button class="quick-btn" id="preset-db-btn">SQL vs NoSQL Indexing</button>
+          </div>
+
+          <button class="btn-primary" id="run-assessment-btn" style="margin-top: 1.5rem;">
+            <span>⚡</span> Evaluate with LangGraph Agent
+          </button>
+        </div>
+
+        <!-- Output Scorecard Panel -->
+        <div class="card">
+          <h3 class="card-title"><span>📈</span> Multi-Dimensional Scorecard</h3>
+          
+          <div class="score-hero-container">
+            <div class="radial-score-gauge" id="assess-radial-gauge">
+              <span class="radial-score-value" id="assess-overall-score">90</span>
+            </div>
+            <div class="score-meta">
+              <h4 id="assess-verdict-title">Mastery Level: Advanced</h4>
+              <p id="assess-verdict-desc">Strong analytical reasoning with accurate technical definitions.</p>
+            </div>
+          </div>
+
+          <!-- 6-Dimension Progress Bars -->
+          <div class="dimension-list" id="assess-dimension-bars">
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Accuracy</span><span id="val-accuracy">95%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-accuracy" style="width: 95%;"></div></div>
+            </div>
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Completeness</span><span id="val-completeness">85%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-completeness" style="width: 85%;"></div></div>
+            </div>
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Reasoning</span><span id="val-reasoning">90%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-reasoning" style="width: 90%;"></div></div>
+            </div>
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Communication</span><span id="val-communication">95%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-communication" style="width: 95%;"></div></div>
+            </div>
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Evidence</span><span id="val-evidence">80%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-evidence" style="width: 80%;"></div></div>
+            </div>
+            <div class="dimension-item">
+              <div class="dimension-info"><span>Professionalism</span><span id="val-professionalism">95%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="bar-professionalism" style="width: 95%;"></div></div>
+            </div>
+          </div>
+
+          <!-- AI Evidence Feedback Box -->
+          <div class="output-box" id="assess-feedback-box">
+            <strong>Evidence-Based Feedback:</strong><br>
+            Your response clearly articulates the conceptual distinction between supervised and unsupervised learning with appropriate practical examples.<br><br>
+            <strong>Next Action:</strong> Quantify the difference in data requirements and training compute for both paradigms to achieve maximum completeness.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Module 2: 7-Day Weak-Score Recommender
+         ========================================================================= -->
+    <section class="module-section" id="module-recommendation">
+      <div class="section-header">
+        <div class="header-badge">Adaptive Curriculum Strategist</div>
+        <h2 class="section-title">Weak-Score 7-Day Study Recommender</h2>
+        <p class="section-subtitle">Converts diagnostic test scores and identified skill gaps into a structured, day-by-day mastery schedule with hands-on practice milestones.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Input Form -->
+        <div class="card">
+          <h3 class="card-title"><span>🎯</span> Diagnostic Profile & Deficiencies</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="rec-role">Target Role or Domain</label>
+            <input type="text" class="form-input" id="rec-role" value="Senior Backend Python Engineer" placeholder="e.g. Full Stack Developer, Data Scientist">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rec-weaknesses">Low Diagnostic Scores & Identified Weak Areas</label>
+            <textarea class="form-textarea" id="rec-weaknesses" rows="5" placeholder="List weak areas and scores...">Database Indexing & Query Plan Optimization (38/100)
+Docker Multi-Stage Builds & Image Size Reduction (42/100)
+Asynchronous Concurrency (asyncio / race conditions) (48/100)</textarea>
+          </div>
+
+          <div class="quick-fill-bar">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Presets:</span>
+            <button class="quick-btn" id="preset-rec-python">Python Backend Gaps</button>
+            <button class="quick-btn" id="preset-rec-devops">DevOps & Cloud Gaps</button>
+          </div>
+
+          <button class="btn-primary" id="run-rec-btn" style="margin-top: 1.5rem;">
+            <span>📅</span> Generate 7-Day Mastery Schedule
+          </button>
+        </div>
+
+        <!-- Generated Schedule Output -->
+        <div class="card">
+          <h3 class="card-title"><span>🗓️</span> Targeted 7-Day Study Roadmap</h3>
+          <div class="roadmap-container" id="rec-roadmap-list">
+            <!-- Day 1 -->
+            <div class="roadmap-day-card">
+              <div class="day-badge-title">
+                <span class="day-badge">Day 1 • Foundation</span>
+                <span class="day-time">⏱️ 45 Mins</span>
+              </div>
+              <div class="day-title">B-Tree Indexes & EXPLAIN ANALYZE Deep Dive</div>
+              <div class="day-desc">Understand composite indexing, execution plans, and sequential scan bottlenecks in PostgreSQL.</div>
+            </div>
+            <!-- Day 2 -->
+            <div class="roadmap-day-card">
+              <div class="day-badge-title">
+                <span class="day-badge">Day 2 • Hands-on</span>
+                <span class="day-time">⏱️ 60 Mins</span>
+              </div>
+              <div class="day-title">Optimizing High-Volume Slow Queries</div>
+              <div class="day-desc">Practice refactoring N+1 queries, partial indexing, and index-only scans on a 1M row mock dataset.</div>
+            </div>
+            <!-- Day 3 -->
+            <div class="roadmap-day-card">
+              <div class="day-badge-title">
+                <span class="day-badge">Day 3 • Foundation</span>
+                <span class="day-time">⏱️ 45 Mins</span>
+              </div>
+              <div class="day-title">Docker Multi-Stage Build Architecture</div>
+              <div class="day-desc">Separate build-time dependencies from slim runtime artifacts to achieve <100MB production images.</div>
+            </div>
+            <!-- Day 4 -->
+            <div class="roadmap-day-card">
+              <div class="day-badge-title">
+                <span class="day-badge">Day 4 • Hands-on</span>
+                <span class="day-time">⏱️ 60 Mins</span>
+              </div>
+              <div class="day-title">Container Security & Non-Root Optimization</div>
+              <div class="day-desc">Implement layer caching best practices and eliminate unnecessary wheels/compilers from deployment containers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Module 3: ATS Resume Scorer (with Document Upload)
+         ========================================================================= -->
+    <section class="module-section" id="module-ats">
+      <div class="section-header">
+        <div class="header-badge">Applicant Tracking System Engine</div>
+        <h2 class="section-title">AI ATS Resume Scorer & Optimization Evaluator</h2>
+        <p class="section-subtitle">Upload your resume file (.pdf, .docx, .txt) or paste text to evaluate against ATS algorithms, verify keyword matching, and receive tailored advice.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Resume Inputs -->
+        <div class="card">
+          <h3 class="card-title"><span>📄</span> Upload Resume & Target Job Description</h3>
+          
+          <!-- Document Upload Dropzone -->
+          <div class="dropzone-container" id="resume-dropzone">
+            <div class="dropzone-icon">📁</div>
+            <div class="dropzone-title">Click or Drag & Drop Resume File</div>
+            <div class="dropzone-sub">Supports .PDF, .DOCX, and .TXT formats</div>
+            <input type="file" id="resume-file-input" accept=".pdf,.docx,.txt" style="display: none;">
+          </div>
+
+          <!-- File Status Badge -->
+          <div class="file-status-badge" id="resume-file-badge">
+            <span id="resume-file-name">📄 resume.pdf</span>
+            <button class="remove-file-btn" id="resume-file-remove" title="Remove File">&times;</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ats-resume-text">Parsed Resume Text Content</label>
+            <textarea class="form-textarea" id="ats-resume-text" rows="7" placeholder="Uploaded document text will extract here automatically, or you can paste directly...">Alex Johnson | alex.johnson@example.com | LinkedIn: linkedin.com/in/alexjohnson
+
+PROFESSIONAL SUMMARY
+Senior Full Stack Engineer with 5+ years of experience building resilient web applications and microservices.
+
+TECHNICAL SKILLS
+Languages & Cloud: Python, TypeScript, SQL, AWS (EC2, S3, Lambda), Docker, Kubernetes, CI/CD, Git.
+Frameworks & DBs: FastAPI, React, PostgreSQL, Redis, REST APIs, Microservices.
+
+EXPERIENCE
+Senior Software Engineer | CloudTech Solutions (2022 - Present)
+- Architected high-throughput microservices using Python FastAPI and AWS Lambda, reducing latency by 42% for 2M daily active users.
+- Spearheaded containerization migration with Docker and Kubernetes, boosting CI/CD deployment frequency by 65%.
+- Optimized PostgreSQL queries and implemented Redis caching, saving $14,000 monthly in cloud infrastructure costs.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ats-jd-text">Target Job Description (Optional)</label>
+            <textarea class="form-textarea" id="ats-jd-text" rows="3" placeholder="Paste target Job Description to test keyword alignment...">Seeking a Senior Python Engineer with AWS, Docker, Kubernetes, PostgreSQL, and FastAPI experience to build scalable microservices.</textarea>
+          </div>
+
+          <button class="btn-primary" id="run-ats-btn">
+            <span>🔍</span> Calculate ATS Score from Document
+          </button>
+        </div>
+
+        <!-- ATS Evaluation Scorecard -->
+        <div class="card">
+          <h3 class="card-title"><span>📊</span> ATS Match Analytics</h3>
+          
+          <div class="score-hero-container">
+            <div class="radial-score-gauge" id="ats-radial-gauge" style="background: conic-gradient(var(--accent-primary) 88%, #e6dfd5 0%);">
+              <span class="radial-score-value" id="ats-overall-score">88</span>
+            </div>
+            <div class="score-meta">
+              <h4 id="ats-verdict-title">Match Level: High Compatibility</h4>
+              <p id="ats-verdict-desc">Strong section structure, quantitative metrics, and rich technical skills detected.</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <span class="form-label">Recognized Core Skills in Document:</span>
+            <div class="skill-tags-group" id="ats-skill-tags">
+              <span class="skill-tag">python</span>
+              <span class="skill-tag">aws</span>
+              <span class="skill-tag">docker</span>
+              <span class="skill-tag">kubernetes</span>
+              <span class="skill-tag">fastapi</span>
+              <span class="skill-tag">postgresql</span>
+              <span class="skill-tag">redis</span>
+              <span class="skill-tag">microservices</span>
+              <span class="skill-tag">ci/cd</span>
+            </div>
+          </div>
+
+          <!-- AI Critique Box -->
+          <div class="output-box" id="ats-critique-box">
+            <strong>ATS Critique & Action Items:</strong><br>
+            • <strong>Strengths:</strong> Outstanding quantification of achievements (e.g., "reducing latency by 42%", "saving $14,000 monthly").<br>
+            • <strong>Recommendation:</strong> Add explicit experience with automated testing tools (e.g., PyTest, Jest) and cloud monitoring (e.g., Datadog, CloudWatch) to achieve a 95+ score for senior roles.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Module 4: RAG Knowledge Assistant (with Document Indexing)
+         ========================================================================= -->
+    <section class="module-section" id="module-rag">
+      <div class="section-header">
+        <div class="header-badge">Vector Search & Grounded Generation</div>
+        <h2 class="section-title">RAG Knowledge Assistant (Document Grounded)</h2>
+        <p class="section-subtitle">Upload knowledge documents (.pdf, .docx, .txt, .md, .csv) to index into searchable chunks and query strictly grounded answers without hallucinations.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Knowledge Context & Query -->
+        <div class="card">
+          <h3 class="card-title"><span>📚</span> Upload & Index Knowledge Document</h3>
+          
+          <!-- RAG Document Dropzone -->
+          <div class="dropzone-container" id="rag-dropzone">
+            <div class="dropzone-icon">📥</div>
+            <div class="dropzone-title">Click or Drop Knowledge Base Document</div>
+            <div class="dropzone-sub">Upload .PDF, .DOCX, .TXT, .MD, or .CSV file to index</div>
+            <input type="file" id="rag-file-input" accept=".pdf,.docx,.txt,.md,.csv" style="display: none;">
+          </div>
+
+          <!-- RAG File Badge -->
+          <div class="file-status-badge" id="rag-file-badge">
+            <span id="rag-file-name">📄 knowledge_base.pdf (Indexed)</span>
+            <button class="remove-file-btn" id="rag-file-remove" title="Remove Document">&times;</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rag-knowledge-text">Active Document Chunks (Context)</label>
+            <textarea class="form-textarea" id="rag-knowledge-text" rows="6" placeholder="Document text will automatically parse and index here...">1. FAISS (Facebook AI Similarity Search) is an open-source library for high-speed nearest-neighbor similarity search and clustering of dense vectors.
+2. LangChain is an open-source framework designed to simplify LLM-powered applications using composable prompt templates, vector retrievers, and tools.
+3. LangGraph enables developers to build stateful, cyclical multi-actor workflows using graph-based state machines.
+4. Retrieval-Augmented Generation (RAG) grounds LLM responses on external retrieved knowledge, drastically eliminating hallucinations.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rag-query-input">Ask a Question Grounded in Uploaded Document</label>
+            <input type="text" class="form-input" id="rag-query-input" value="What is FAISS and what problem does it solve?" placeholder="Type your question about the uploaded document...">
+          </div>
+
+          <button class="btn-primary" id="run-rag-btn">
+            <span>⚡</span> Search Document & Generate Grounded Answer
+          </button>
+        </div>
+
+        <!-- Chat / Response Panel -->
+        <div class="card">
+          <h3 class="card-title"><span>💬</span> Grounded Answer & Source Citations</h3>
+          
+          <div class="rag-chat-history" id="rag-chat-box">
+            <div class="rag-bubble user">What is FAISS and what problem does it solve?</div>
+            <div class="rag-bubble assistant">
+              <strong>FAISS</strong> (Facebook AI Similarity Search) is an open-source library developed by Meta AI. It solves the problem of efficiently searching, clustering, and matching large collections of dense vector embeddings in high-dimensional spaces at lightning speed.
+              <br>
+              <span class="source-chip">Source: Retrieved from Uploaded Knowledge Document</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Settings Modal (Configure Tokens) -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="card-title" style="margin: 0;"><span>⚙️</span> API & Model Configuration</h3>
+        <button class="modal-close-btn" id="close-settings-btn">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="hf-token-input">Hugging Face API Token</label>
+        <input type="password" class="form-input" id="hf-token-input" placeholder="hf_xxxxxxxxxxxxxxxxxxxx">
+        <small style="color: var(--text-muted); font-size: 0.75rem;">Uses meta-llama/Llama-3.3-70B-Instruct via Hugging Face Serverless API.</small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="openai-token-input">OpenAI API Key (Optional)</label>
+        <input type="password" class="form-input" id="openai-token-input" placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
+      </div>
+
+      <button class="btn-primary" id="save-settings-btn" style="margin-top: 1rem;">
+        Save & Apply Configuration
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 Agentic AI Suite • Deployable on Cloudflare Pages • Powered by LangGraph & Llama 3.3</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

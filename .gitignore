@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Python Virtual Environments & Cache
+gpt_agentic_env/
+__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+
+# Large Media & Scratch
+video_demo.mp4
+video_frames/
+.tempmediaStorage/
+
+# Editor & OS Files
+.vscode/
+.DS_Store
+Thumbs.db

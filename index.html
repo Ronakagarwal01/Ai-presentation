@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agentic AI Suite — Cloudflare Edition</title>
-  <meta name="description" content="State-of-the-art Agentic AI Suite powered by Llama 3.3 and LangGraph. Evaluates assessments, generates adaptive study plans, calculates ATS resume scores from uploaded documents, and performs grounded RAG queries.">
+  <title>Agentic AI Suite — EEDI & Role-Grounded Edition</title>
+  <meta name="description" content="State-of-the-art Agentic AI Suite powered by Llama 3.3, LangGraph, and EEDI Evaluation Engine. Features role-specific assessment evaluation, dynamic 7-day study roadmaps, Job-Description grounded ATS resume scoring, grounded RAG assistant, and real student training data collection.">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   
@@ -21,7 +21,7 @@
         <div class="logo-icon">⚡</div>
         <div class="brand-text">
           <h1>Agentic AI Suite</h1>
-          <span>LangGraph & Llama 3.3 Engine</span>
+          <span>LangGraph & EEDI Evaluation Engine</span>
         </div>
       </a>
       
@@ -43,19 +43,23 @@
     <div class="tabs-container">
       <button class="tab-btn active" data-target="module-assessment" id="tab-btn-assessment">
         <span>📊</span> Assessment Evaluator
-        <span class="tab-badge">6-D Scoring</span>
+        <span class="tab-badge">EEDI 5-D Engine</span>
       </button>
       <button class="tab-btn" data-target="module-recommendation" id="tab-btn-recommender">
         <span>🎯</span> 7-Day Recommender
-        <span class="tab-badge">Study Plan</span>
+        <span class="tab-badge">Role Curriculum</span>
       </button>
       <button class="tab-btn" data-target="module-ats" id="tab-btn-ats">
         <span>📄</span> ATS Resume Scorer
-        <span class="tab-badge">Document Upload</span>
+        <span class="tab-badge">Role & JD Grounded</span>
       </button>
       <button class="tab-btn" data-target="module-rag" id="tab-btn-rag">
         <span>🧠</span> RAG Knowledge Assistant
         <span class="tab-badge">Doc Indexing</span>
+      </button>
+      <button class="tab-btn" data-target="module-trainer-hub" id="tab-btn-trainer">
+        <span>🏛️</span> EEDI Data & Trainer Hub
+        <span class="tab-badge" style="background:#fef3c7; color:#92400e;">Role & JD / Logs</span>
       </button>
       <a href="presentation.html" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(30,64,175,0.12)); border-color:#bfdbfe;" target="_blank">
         <span>🎤</span> Presentation Simulator
@@ -68,19 +72,81 @@
   <main class="main-content">
 
     <!-- =========================================================================
-         Module 1: Assessment Scoring & Feedback
+         Module 1: Assessment Scoring & Feedback (EEDI Parameters & Question Bank)
          ========================================================================= -->
     <section class="module-section active" id="module-assessment">
       <div class="section-header">
-        <div class="header-badge">LangGraph Evaluation Pipeline</div>
+        <div class="header-badge">EEDI Evaluation Engine • Grounded against Expected Key Points</div>
         <h2 class="section-title">Assessment Scoring & Evidence-Based Feedback</h2>
-        <p class="section-subtitle">Scores learner responses across six core dimensions (Accuracy, Completeness, Reasoning, Communication, Evidence, Professionalism) and generates actionable growth advice.</p>
+        <p class="section-subtitle">Evaluates responses against role-specific expected answers and key concepts using predefined EEDI weighted parameters: Technical Knowledge (30%), Problem Solving (25%), Communication (20%), Critical Thinking (15%), and Professionalism (10%).</p>
       </div>
 
       <div class="grid-2col">
         <!-- Input Panel -->
         <div class="card">
-          <h3 class="card-title"><span>📝</span> Test Prompt & Learner Response</h3>
+          <h3 class="card-title"><span>📝</span> Role, Question Bank & Student Response</h3>
+
+          <!-- Role Selection -->
+          <div class="form-group">
+            <label class="form-label" for="assess-role-select">Target Job Role</label>
+            <select class="form-input" id="assess-role-select" style="cursor: pointer; font-weight: 600;">
+              <option value="data-science-ai">Data Scientist / Machine Learning Engineer</option>
+              <option value="senior-python-backend">Senior Backend Python Engineer</option>
+              <option value="devops-cloud">Cloud DevOps & Platform Engineer</option>
+              <option value="frontend-react">Senior Frontend React / Next.js Engineer</option>
+              <option value="fullstack-web">Full Stack Software Engineer</option>
+              <option value="cyber-security">Cybersecurity & Incident Response Analyst</option>
+              <option value="custom">Custom Role & Question</option>
+            </select>
+          </div>
+
+          <!-- Question Selector from Question Bank -->
+          <div class="form-group">
+            <label class="form-label" for="assess-question-select">Select Question from Question Bank</label>
+            <select class="form-input" id="assess-question-select" style="cursor: pointer;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <!-- Collapsible Expected Answer & Evaluation Key Points Card -->
+          <div class="expected-box" id="assess-expected-box">
+            <div class="expected-header" id="expected-toggle-btn">
+              <span class="expected-header-title">
+                <span>🔑</span> Expected Answer & Grading Key Points
+              </span>
+              <span id="expected-toggle-icon" style="font-size:0.8rem; color:var(--text-muted);">▲ Hide</span>
+            </div>
+            <div class="expected-content" id="expected-content-body">
+              <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Expected Model Answer:</span>
+              <div class="expected-text" id="expected-answer-text">
+                Supervised learning uses labeled training datasets to train models for prediction (classification/regression) against ground-truth targets. Unsupervised learning analyzes unlabeled data to uncover hidden patterns and natural clusters.
+              </div>
+              
+              <div style="margin-top:0.5rem;">
+                <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Essential Key Concepts / Keywords:</span>
+                <div class="skill-tags-group" id="expected-keywords-tags" style="margin-top:0.35rem;">
+                  <span class="skill-tag">supervised</span>
+                  <span class="skill-tag">unsupervised</span>
+                  <span class="skill-tag">labeled</span>
+                  <span class="skill-tag">unlabeled</span>
+                  <span class="skill-tag">classification</span>
+                  <span class="skill-tag">clustering</span>
+                </div>
+              </div>
+
+              <div class="criteria-list">
+                <div><strong style="color:#15803d;">✓ Full Marks Condition:</strong> <span id="condition-correct-text">Clearly contrasts labeled vs unlabeled data and provides valid real-world examples for both.</span></div>
+                <div><strong style="color:#b91c1c;">✕ Penalty Condition:</strong> <span id="condition-incorrect-text">Penalty applied if student simply copies/echoes the question prompt, rambles about unrelated topics (e.g. server deployment / laptop shut down), or confuses labels.</span></div>
+              </div>
+
+              <!-- Quick Testing Action Bar -->
+              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed var(--border-subtle); display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <button class="action-btn-sm" id="btn-fill-good" title="Test with correct answer">✨ Load Ideal Answer</button>
+                <button class="action-btn-sm" id="btn-fill-ss3-bad" style="color:#b91c1c; border-color:#fca5a5;" title="Test strict penalty against SS3 off-topic text">⚠️ Load SS3 Off-Topic Answer (Strict Test)</button>
+                <button class="action-btn-sm" id="btn-clear-response">Clear</button>
+              </div>
+            </div>
+          </div>
           
           <div class="form-group">
             <label class="form-label" for="assess-question">Diagnostic Question / Problem Statement</label>
@@ -88,25 +154,31 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="assess-response">Learner's Submitted Response</label>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" for="assess-response">Learner's Submitted Response</label>
+              <input type="text" id="assess-student-name" placeholder="Student Name (Optional)" value="Candidate Response" style="font-size:0.75rem; padding:0.2rem 0.5rem; border:1px solid var(--border-subtle); border-radius:4px; width:170px;">
+            </div>
             <textarea class="form-textarea" id="assess-response" rows="6" placeholder="Enter candidate's response...">Supervised learning uses labeled datasets to train models for prediction, such as email spam filtering or house price regression. In contrast, unsupervised learning discovers hidden patterns and natural clusters in unlabeled data, like customer segmentation in e-commerce.</textarea>
           </div>
 
-          <div class="quick-fill-bar">
-            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Presets:</span>
-            <button class="quick-btn" id="preset-ml-btn">ML Supervised vs Unsupervised</button>
-            <button class="quick-btn" id="preset-db-btn">SQL vs NoSQL Indexing</button>
-          </div>
-
-          <button class="btn-primary" id="run-assessment-btn" style="margin-top: 1.5rem;">
-            <span>⚡</span> Evaluate with LangGraph Agent
+          <button class="btn-primary" id="run-assessment-btn" style="margin-top: 1rem;">
+            <span>⚡</span> Evaluate with EEDI LangGraph Engine
           </button>
         </div>
 
         <!-- Output Scorecard Panel -->
         <div class="card">
-          <h3 class="card-title"><span>📈</span> Multi-Dimensional Scorecard</h3>
+          <h3 class="card-title"><span>📈</span> EEDI Multi-Dimensional Scorecard</h3>
           
+          <!-- Penalty Warning Banner (Active when off-topic or echo is detected) -->
+          <div class="penalty-banner" id="assess-penalty-alert">
+            <span style="font-size: 1.25rem;">⚠️</span>
+            <div>
+              <strong id="penalty-title">Severe Off-Topic Content Detected</strong>
+              <div id="penalty-desc" style="font-size: 0.82rem; margin-top: 0.2rem;">Response contains unrelated text discussing server deployment rather than supervised/unsupervised machine learning. Heavy penalty applied to Technical Knowledge and Problem Solving.</div>
+            </div>
+          </div>
+
           <div class="score-hero-container">
             <div class="radial-score-gauge" id="assess-radial-gauge">
               <span class="radial-score-value" id="assess-overall-score">90</span>
@@ -117,31 +189,57 @@
             </div>
           </div>
 
-          <!-- 6-Dimension Progress Bars -->
+          <!-- EEDI Weighted Formula Card -->
+          <div class="eedi-formula-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span><strong>EEDI Weighted Scoring Rule:</strong></span>
+              <a href="#" id="goto-eedi-rules-link" style="color:var(--accent-primary); font-size:0.75rem; text-decoration:none; font-weight:600;">Configure Weights ⚙️</a>
+            </div>
+            <div class="formula-text" id="eedi-formula-text">
+              Final = (Technical × 30%) + (Problem Solving × 25%) + (Communication × 20%) + (Critical Thinking × 15%) + (Professionalism × 10%)
+            </div>
+          </div>
+
+          <!-- 5-Dimension EEDI Progress Bars -->
           <div class="dimension-list" id="assess-dimension-bars">
             <div class="dimension-item">
-              <div class="dimension-info"><span>Accuracy</span><span id="val-accuracy">95%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-accuracy" style="width: 95%;"></div></div>
+              <div class="dimension-info">
+                <span>Technical Knowledge <small style="color:var(--text-muted); font-size:0.75rem;">(Weight: 30%)</small></span>
+                <span id="val-technical">95%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="bar-technical" style="width: 95%;"></div></div>
             </div>
+
             <div class="dimension-item">
-              <div class="dimension-info"><span>Completeness</span><span id="val-completeness">85%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-completeness" style="width: 85%;"></div></div>
+              <div class="dimension-info">
+                <span>Problem Solving <small style="color:var(--text-muted); font-size:0.75rem;">(Weight: 25%)</small></span>
+                <span id="val-problemSolving">88%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="bar-problemSolving" style="width: 88%;"></div></div>
             </div>
+
             <div class="dimension-item">
-              <div class="dimension-info"><span>Reasoning</span><span id="val-reasoning">90%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-reasoning" style="width: 90%;"></div></div>
+              <div class="dimension-info">
+                <span>Communication <small style="color:var(--text-muted); font-size:0.75rem;">(Weight: 20%)</small></span>
+                <span id="val-communication">90%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="bar-communication" style="width: 90%;"></div></div>
             </div>
+
             <div class="dimension-item">
-              <div class="dimension-info"><span>Communication</span><span id="val-communication">95%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-communication" style="width: 95%;"></div></div>
+              <div class="dimension-info">
+                <span>Critical Thinking <small style="color:var(--text-muted); font-size:0.75rem;">(Weight: 15%)</small></span>
+                <span id="val-criticalThinking">85%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="bar-criticalThinking" style="width: 85%;"></div></div>
             </div>
+
             <div class="dimension-item">
-              <div class="dimension-info"><span>Evidence</span><span id="val-evidence">80%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-evidence" style="width: 80%;"></div></div>
-            </div>
-            <div class="dimension-item">
-              <div class="dimension-info"><span>Professionalism</span><span id="val-professionalism">95%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="bar-professionalism" style="width: 95%;"></div></div>
+              <div class="dimension-info">
+                <span>Professionalism <small style="color:var(--text-muted); font-size:0.75rem;">(Weight: 10%)</small></span>
+                <span id="val-professionalism">92%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="bar-professionalism" style="width: 92%;"></div></div>
             </div>
           </div>
 
@@ -151,18 +249,24 @@
             Your response clearly articulates the conceptual distinction between supervised and unsupervised learning with appropriate practical examples.<br><br>
             <strong>Next Action:</strong> Quantify the difference in data requirements and training compute for both paradigms to achieve maximum completeness.
           </div>
+
+          <!-- Real Student Logging Badge -->
+          <div style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; color:var(--text-muted);">
+            <span>📁 Logged to Real Student Dataset</span>
+            <button class="action-btn-sm" id="btn-view-logged-submission">View in Trainer Hub →</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- =========================================================================
-         Module 2: 7-Day Weak-Score Recommender
+         Module 2: 7-Day Weak-Score Recommender (Role-Specific Dynamic Schedules)
          ========================================================================= -->
     <section class="module-section" id="module-recommendation">
       <div class="section-header">
-        <div class="header-badge">Adaptive Curriculum Strategist</div>
+        <div class="header-badge">Adaptive Curriculum Strategist • Role-Specific Roadmaps</div>
         <h2 class="section-title">Weak-Score 7-Day Study Recommender</h2>
-        <p class="section-subtitle">Converts diagnostic test scores and identified skill gaps into a structured, day-by-day mastery schedule with hands-on practice milestones.</p>
+        <p class="section-subtitle">Dynamically synthesizes a customized 7-day technical mastery roadmap tailored specifically to your chosen job role and diagnosed weak areas. Never generic or static.</p>
       </div>
 
       <div class="grid-2col">
@@ -171,7 +275,20 @@
           <h3 class="card-title"><span>🎯</span> Diagnostic Profile & Deficiencies</h3>
           
           <div class="form-group">
-            <label class="form-label" for="rec-role">Target Role or Domain</label>
+            <label class="form-label" for="rec-role-select">Select Target Role</label>
+            <select class="form-input" id="rec-role-select" style="cursor: pointer; font-weight: 600;">
+              <option value="senior-python-backend">Senior Backend Python Engineer</option>
+              <option value="data-science-ai">Data Scientist / Machine Learning Engineer</option>
+              <option value="devops-cloud">Cloud DevOps & Platform Engineer</option>
+              <option value="frontend-react">Senior Frontend React / Next.js Engineer</option>
+              <option value="fullstack-web">Full Stack Software Engineer</option>
+              <option value="cyber-security">Cybersecurity & Incident Response Analyst</option>
+              <option value="custom">Custom Specified Role</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rec-role">Target Role Name</label>
             <input type="text" class="form-input" id="rec-role" value="Senior Backend Python Engineer" placeholder="e.g. Full Stack Developer, Data Scientist">
           </div>
 
@@ -183,9 +300,11 @@ Asynchronous Concurrency (asyncio / race conditions) (48/100)</textarea>
           </div>
 
           <div class="quick-fill-bar">
-            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Presets:</span>
-            <button class="quick-btn" id="preset-rec-python">Python Backend Gaps</button>
-            <button class="quick-btn" id="preset-rec-devops">DevOps & Cloud Gaps</button>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Role Presets:</span>
+            <button class="quick-btn" id="preset-rec-python">Python Backend</button>
+            <button class="quick-btn" id="preset-rec-ds">Data Science & AI</button>
+            <button class="quick-btn" id="preset-rec-devops">DevOps & Cloud</button>
+            <button class="quick-btn" id="preset-rec-frontend">Frontend React</button>
           </div>
 
           <button class="btn-primary" id="run-rec-btn" style="margin-top: 1.5rem;">
@@ -195,69 +314,50 @@ Asynchronous Concurrency (asyncio / race conditions) (48/100)</textarea>
 
         <!-- Generated Schedule Output -->
         <div class="card">
-          <h3 class="card-title"><span>🗓️</span> Targeted 7-Day Study Roadmap</h3>
+          <h3 class="card-title">
+            <span>🗓️</span> Targeted 7-Day Roadmap for <span id="rec-output-role-title" style="color:var(--accent-primary); font-size:1.05rem;">Senior Backend Python Engineer</span>
+          </h3>
           <div class="roadmap-container" id="rec-roadmap-list">
-            <!-- Day 1 -->
-            <div class="roadmap-day-card">
-              <div class="day-badge-title">
-                <span class="day-badge">Day 1 • Foundation</span>
-                <span class="day-time">⏱️ 45 Mins</span>
-              </div>
-              <div class="day-title">B-Tree Indexes & EXPLAIN ANALYZE Deep Dive</div>
-              <div class="day-desc">Understand composite indexing, execution plans, and sequential scan bottlenecks in PostgreSQL.</div>
-            </div>
-            <!-- Day 2 -->
-            <div class="roadmap-day-card">
-              <div class="day-badge-title">
-                <span class="day-badge">Day 2 • Hands-on</span>
-                <span class="day-time">⏱️ 60 Mins</span>
-              </div>
-              <div class="day-title">Optimizing High-Volume Slow Queries</div>
-              <div class="day-desc">Practice refactoring N+1 queries, partial indexing, and index-only scans on a 1M row mock dataset.</div>
-            </div>
-            <!-- Day 3 -->
-            <div class="roadmap-day-card">
-              <div class="day-badge-title">
-                <span class="day-badge">Day 3 • Foundation</span>
-                <span class="day-time">⏱️ 45 Mins</span>
-              </div>
-              <div class="day-title">Docker Multi-Stage Build Architecture</div>
-              <div class="day-desc">Separate build-time dependencies from slim runtime artifacts to achieve <100MB production images.</div>
-            </div>
-            <!-- Day 4 -->
-            <div class="roadmap-day-card">
-              <div class="day-badge-title">
-                <span class="day-badge">Day 4 • Hands-on</span>
-                <span class="day-time">⏱️ 60 Mins</span>
-              </div>
-              <div class="day-title">Container Security & Non-Root Optimization</div>
-              <div class="day-desc">Implement layer caching best practices and eliminate unnecessary wheels/compilers from deployment containers.</div>
-            </div>
+            <!-- Dynamically populated per role -->
           </div>
         </div>
       </div>
     </section>
 
     <!-- =========================================================================
-         Module 3: ATS Resume Scorer (with Document Upload)
+         Module 3: ATS Resume Scorer (with Job Role & Specific JD Grounding)
          ========================================================================= -->
     <section class="module-section" id="module-ats">
       <div class="section-header">
-        <div class="header-badge">Applicant Tracking System Engine</div>
-        <h2 class="section-title">AI ATS Resume Scorer & Optimization Evaluator</h2>
-        <p class="section-subtitle">Upload your resume file (.pdf, .docx, .txt) or paste text to evaluate against ATS algorithms, verify keyword matching, and receive tailored advice.</p>
+        <div class="header-badge">Applicant Tracking System Engine • Job Description Matched</div>
+        <h2 class="section-title">AI ATS Resume Scorer & Role Compatibility Evaluator</h2>
+        <p class="section-subtitle">Select a target job role to automatically load industry-standard Job Descriptions and required skills, or paste your own JD to calculate exact ATS keyword alignment, missing skills, and scoring.</p>
       </div>
 
       <div class="grid-2col">
         <!-- Resume Inputs -->
         <div class="card">
-          <h3 class="card-title"><span>📄</span> Upload Resume & Target Job Description</h3>
-          
+          <h3 class="card-title"><span>📄</span> Target Role, JD & Resume Upload</h3>
+
+          <!-- Role Selector for JD Grounding -->
+          <div class="form-group">
+            <label class="form-label" for="ats-role-select">Target Job Role for ATS Evaluation</label>
+            <select class="form-input" id="ats-role-select" style="cursor: pointer; font-weight: 600;">
+              <option value="senior-python-backend">Senior Backend Python Engineer (4-7 Yrs)</option>
+              <option value="data-science-ai">Data Scientist / Machine Learning Engineer (3-6 Yrs)</option>
+              <option value="devops-cloud">Cloud DevOps & Platform Engineer (4-8 Yrs)</option>
+              <option value="frontend-react">Senior Frontend React / Next.js Engineer (4-6 Yrs)</option>
+              <option value="fullstack-web">Full Stack Software Engineer (3-5 Yrs)</option>
+              <option value="cyber-security">Cybersecurity & Incident Response Analyst (3-6 Yrs)</option>
+              <option value="custom">Custom Job Role & JD</option>
+            </select>
+          </div>
+
           <!-- Document Upload Dropzone -->
           <div class="dropzone-container" id="resume-dropzone">
             <div class="dropzone-icon">📁</div>
             <div class="dropzone-title">Click or Drag & Drop Resume File</div>
-            <div class="dropzone-sub">Supports .PDF, .DOCX, and .TXT formats</div>
+            <div class="dropzone-sub">Supports .PDF, .DOCX, and .TXT formats (Client-side parsed)</div>
             <input type="file" id="resume-file-input" accept=".pdf,.docx,.txt" style="display: none;">
           </div>
 
@@ -272,32 +372,35 @@ Asynchronous Concurrency (asyncio / race conditions) (48/100)</textarea>
             <textarea class="form-textarea" id="ats-resume-text" rows="7" placeholder="Uploaded document text will extract here automatically, or you can paste directly...">Alex Johnson | alex.johnson@example.com | LinkedIn: linkedin.com/in/alexjohnson
 
 PROFESSIONAL SUMMARY
-Senior Full Stack Engineer with 5+ years of experience building resilient web applications and microservices.
+Senior Backend Python Engineer with 5+ years of experience building resilient web applications, microservices, and high-throughput APIs.
 
 TECHNICAL SKILLS
-Languages & Cloud: Python, TypeScript, SQL, AWS (EC2, S3, Lambda), Docker, Kubernetes, CI/CD, Git.
-Frameworks & DBs: FastAPI, React, PostgreSQL, Redis, REST APIs, Microservices.
+Languages & Cloud: Python, TypeScript, SQL, PostgreSQL, AWS (EC2, S3, RDS), Docker, Kubernetes, CI/CD, Git.
+Frameworks & Tools: FastAPI, SQLAlchemy, Redis, Celery, REST APIs, Microservices, pytest.
 
 EXPERIENCE
-Senior Software Engineer | CloudTech Solutions (2022 - Present)
-- Architected high-throughput microservices using Python FastAPI and AWS Lambda, reducing latency by 42% for 2M daily active users.
+Senior Backend Engineer | CloudTech Solutions (2022 - Present)
+- Architected high-throughput microservices using Python FastAPI and AWS, reducing latency by 42% for 2M daily active users.
 - Spearheaded containerization migration with Docker and Kubernetes, boosting CI/CD deployment frequency by 65%.
 - Optimized PostgreSQL queries and implemented Redis caching, saving $14,000 monthly in cloud infrastructure costs.</textarea>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="ats-jd-text">Target Job Description (Optional)</label>
-            <textarea class="form-textarea" id="ats-jd-text" rows="3" placeholder="Paste target Job Description to test keyword alignment...">Seeking a Senior Python Engineer with AWS, Docker, Kubernetes, PostgreSQL, and FastAPI experience to build scalable microservices.</textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" for="ats-jd-text">Target Job Description (JD)</label>
+              <span id="ats-jd-req-count" style="font-size:0.75rem; color:var(--accent-primary); font-weight:600;">8 Required Skills Loaded</span>
+            </div>
+            <textarea class="form-textarea" id="ats-jd-text" rows="4" placeholder="Job Description will load automatically based on selected role, or paste your custom JD here...">Seeking a Senior Backend Python Engineer to architect, build, and optimize scalable distributed microservices, APIs, and data ingestion pipelines. Required: Python, FastAPI, PostgreSQL, Database Indexing, Asyncio Concurrency, Docker & Kubernetes, Redis Caching, AWS.</textarea>
           </div>
 
           <button class="btn-primary" id="run-ats-btn">
-            <span>🔍</span> Calculate ATS Score from Document
+            <span>🔍</span> Calculate ATS Score against Selected Job Role & JD
           </button>
         </div>
 
         <!-- ATS Evaluation Scorecard -->
         <div class="card">
-          <h3 class="card-title"><span>📊</span> ATS Match Analytics</h3>
+          <h3 class="card-title"><span>📊</span> Job Role & JD Compatibility Analytics</h3>
           
           <div class="score-hero-container">
             <div class="radial-score-gauge" id="ats-radial-gauge" style="background: conic-gradient(var(--accent-primary) 88%, #e6dfd5 0%);">
@@ -305,49 +408,77 @@ Senior Software Engineer | CloudTech Solutions (2022 - Present)
             </div>
             <div class="score-meta">
               <h4 id="ats-verdict-title">Match Level: High Compatibility</h4>
-              <p id="ats-verdict-desc">Strong section structure, quantitative metrics, and rich technical skills detected.</p>
+              <p id="ats-verdict-desc">Strong match against Senior Backend Python Engineer JD requirements.</p>
             </div>
           </div>
 
+          <!-- Matched JD Skills Section -->
           <div style="margin-bottom: 1.25rem;">
-            <span class="form-label">Recognized Core Skills in Document:</span>
-            <div class="skill-tags-group" id="ats-skill-tags">
-              <span class="skill-tag">python</span>
-              <span class="skill-tag">aws</span>
-              <span class="skill-tag">docker</span>
-              <span class="skill-tag">kubernetes</span>
-              <span class="skill-tag">fastapi</span>
-              <span class="skill-tag">postgresql</span>
-              <span class="skill-tag">redis</span>
-              <span class="skill-tag">microservices</span>
-              <span class="skill-tag">ci/cd</span>
+            <span class="form-label" style="display:flex; justify-content:space-between;">
+              <span>🟢 Matched Required Skills from JD:</span>
+              <span id="ats-matched-ratio" style="color:#15803d; font-weight:700;">8/10 Matched</span>
+            </span>
+            <div class="skill-tags-group" id="ats-matched-tags">
+              <span class="skill-tag matched">python</span>
+              <span class="skill-tag matched">fastapi</span>
+              <span class="skill-tag matched">postgresql</span>
+              <span class="skill-tag matched">docker</span>
+              <span class="skill-tag matched">redis</span>
+              <span class="skill-tag matched">aws</span>
+              <span class="skill-tag matched">microservices</span>
+              <span class="skill-tag matched">ci/cd</span>
+            </div>
+          </div>
+
+          <!-- Missing Critical JD Skills Section -->
+          <div style="margin-bottom: 1.25rem;">
+            <span class="form-label" style="display:flex; justify-content:space-between;">
+              <span>🔴 Missing Critical Skills from JD:</span>
+              <span id="ats-missing-ratio" style="color:#b91c1c; font-weight:700;">2 Missing</span>
+            </span>
+            <div class="skill-tags-group" id="ats-missing-tags">
+              <span class="skill-tag missing">asyncio concurrency</span>
+              <span class="skill-tag missing">database indexing</span>
             </div>
           </div>
 
           <!-- AI Critique Box -->
           <div class="output-box" id="ats-critique-box">
-            <strong>ATS Critique & Action Items:</strong><br>
-            • <strong>Strengths:</strong> Outstanding quantification of achievements (e.g., "reducing latency by 42%", "saving $14,000 monthly").<br>
-            • <strong>Recommendation:</strong> Add explicit experience with automated testing tools (e.g., PyTest, Jest) and cloud monitoring (e.g., Datadog, CloudWatch) to achieve a 95+ score for senior roles.
+            <strong>Role-Grounded ATS Analysis & Action Items:</strong><br>
+            • <strong>JD Alignment:</strong> Found 8 of 10 essential keywords for Senior Backend Python Engineer.<br>
+            • <strong>Strengths:</strong> Excellent quantitative impact ("reducing latency by 42%", "saving $14,000 monthly").<br>
+            • <strong>Targeted Improvement:</strong> Explicitly mention hands-on experience with <em>Asyncio Concurrency</em> and <em>PostgreSQL Database Indexing (EXPLAIN ANALYZE)</em> to increase JD alignment from 88% to 96%+.
           </div>
         </div>
       </div>
     </section>
 
     <!-- =========================================================================
-         Module 4: RAG Knowledge Assistant (with Document Indexing)
+         Module 4: RAG Knowledge Assistant (Document Grounded Q&A)
          ========================================================================= -->
     <section class="module-section" id="module-rag">
       <div class="section-header">
         <div class="header-badge">Vector Search & Grounded Generation</div>
         <h2 class="section-title">RAG Knowledge Assistant (Document Grounded)</h2>
-        <p class="section-subtitle">Upload knowledge documents (.pdf, .docx, .txt, .md, .csv) to index into searchable chunks and query strictly grounded answers without hallucinations.</p>
+        <p class="section-subtitle">Upload or select domain documents (.pdf, .docx, .txt, .md, .csv) to index into searchable chunks. Answers are strictly grounded in document context without hallucinations.</p>
       </div>
 
       <div class="grid-2col">
         <!-- Knowledge Context & Query -->
         <div class="card">
           <h3 class="card-title"><span>📚</span> Upload & Index Knowledge Document</h3>
+
+          <!-- Preloaded Document Presets -->
+          <div class="form-group">
+            <label class="form-label" for="rag-doc-preset">Knowledge Base Document Selection</label>
+            <select class="form-input" id="rag-doc-preset" style="cursor: pointer; font-weight: 600;">
+              <option value="gate-cse">GATE CSE 2027 Complete Guide & Master Plan (Active Context)</option>
+              <option value="data-science-rag">Data Science, ML & Vector Search Architectures</option>
+              <option value="backend-architecture">Senior Backend Python & Distributed Systems</option>
+              <option value="devops-k8s">Cloud DevOps, Kubernetes & Infrastructure as Code</option>
+              <option value="custom-file">Custom Uploaded Document (Use Dropzone Below)</option>
+            </select>
+          </div>
           
           <!-- RAG Document Dropzone -->
           <div class="dropzone-container" id="rag-dropzone">
@@ -358,25 +489,44 @@ Senior Software Engineer | CloudTech Solutions (2022 - Present)
           </div>
 
           <!-- RAG File Badge -->
-          <div class="file-status-badge" id="rag-file-badge">
-            <span id="rag-file-name">📄 knowledge_base.pdf (Indexed)</span>
+          <div class="file-status-badge active" id="rag-file-badge">
+            <span id="rag-file-name">📄 GATE_CSE_Book_Master_Plan.docx (8072 words indexed)</span>
             <button class="remove-file-btn" id="rag-file-remove" title="Remove Document">&times;</button>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="rag-knowledge-text">Active Document Chunks (Context)</label>
-            <textarea class="form-textarea" id="rag-knowledge-text" rows="6" placeholder="Document text will automatically parse and index here...">1. FAISS (Facebook AI Similarity Search) is an open-source library for high-speed nearest-neighbor similarity search and clustering of dense vectors.
-2. LangChain is an open-source framework designed to simplify LLM-powered applications using composable prompt templates, vector retrievers, and tools.
-3. LangGraph enables developers to build stateful, cyclical multi-actor workflows using graph-based state machines.
-4. Retrieval-Augmented Generation (RAG) grounds LLM responses on external retrieved knowledge, drastically eliminating hallucinations.</textarea>
+            <textarea class="form-textarea" id="rag-knowledge-text" rows="6" placeholder="Document text will automatically parse and index here...">GATE CSE COMPLETE GUIDE — BOOK MASTER PLAN
+
+From Zero to GATE-Level Mastery • Concepts + Examples + Visual Explanations + 10-Year PYQs + Practice + Revision
+
+Prepared for: Winfred • Plan version 1.0 • 27 September 2026 • Master syllabus: GATE 2027 CS (IIT Madras)
+
+1. Engineering Mathematics: Linear Algebra, Calculus, Probability, Discrete Mathematics (Sets, Relations, Functions, Graph Theory).
+2. Digital Logic: Boolean Algebra, Combinational and Sequential Circuits, Number Representations.
+3. Computer Organization and Architecture: Machine instructions, ALU, Data-path and Control unit, Instruction pipelining, Memory hierarchy (Cache, Main memory, Virtual memory).
+4. Programming and Data Structures: C programming, Recursion, Arrays, Stacks, Queues, Linked Lists, Trees, Binary Search Trees, Binary Heaps, Graphs.
+5. Algorithms: Asymptotic analysis, Searching, Sorting, Divide-and-conquer, Greedy, Dynamic Programming, Graph traversals, Minimum Spanning Trees, Shortest paths.
+6. Theory of Computation: Regular expressions and finite automata, Context-free grammars and push-down automata, Turing machines and undecidability.
+7. Compiler Design: Lexical analysis, Parsing, Syntax-directed translation, Runtime environments, Intermediate code generation.
+8. Operating Systems: Processes, Threads, Inter-process communication, Concurrency, Synchronization, Deadlock, CPU scheduling, Memory management.
+9. Databases: ER-model, Relational model, Relational algebra, Tuple calculus, SQL, Integrity constraints, Normal forms, Transactions, Concurrency control.
+10. Computer Networks: Concept of layering, Flow and error control techniques, Switching, IPv4/IPv6, Routers, Routing algorithms, TCP/UDP, Sockets, Congestion control, Application layer protocols (DNS, SMTP, POP, FTP, HTTP).</textarea>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="rag-query-input">Ask a Question Grounded in Uploaded Document</label>
-            <input type="text" class="form-input" id="rag-query-input" value="What is FAISS and what problem does it solve?" placeholder="Type your question about the uploaded document...">
+            <input type="text" class="form-input" id="rag-query-input" value="syllabus of gate" placeholder="Type your question about the uploaded document...">
           </div>
 
-          <button class="btn-primary" id="run-rag-btn">
+          <div class="quick-fill-bar">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Quick Query Tests:</span>
+            <button class="quick-btn" id="btn-rag-q1">syllabus of gate</button>
+            <button class="quick-btn" id="btn-rag-q2">last date of gate form (Out-of-context test)</button>
+            <button class="quick-btn" id="btn-rag-q3">What is FAISS?</button>
+          </div>
+
+          <button class="btn-primary" id="run-rag-btn" style="margin-top: 1rem;">
             <span>⚡</span> Search Document & Generate Grounded Answer
           </button>
         </div>
@@ -386,9 +536,18 @@ Senior Software Engineer | CloudTech Solutions (2022 - Present)
           <h3 class="card-title"><span>💬</span> Grounded Answer & Source Citations</h3>
           
           <div class="rag-chat-history" id="rag-chat-box">
-            <div class="rag-bubble user">What is FAISS and what problem does it solve?</div>
+            <div class="rag-bubble user">syllabus of gate</div>
             <div class="rag-bubble assistant">
-              <strong>FAISS</strong> (Facebook AI Similarity Search) is an open-source library developed by Meta AI. It solves the problem of efficiently searching, clustering, and matching large collections of dense vector embeddings in high-dimensional spaces at lightning speed.
+              Based strictly on **GATE_CSE_Book_Master_Plan.docx**:
+              <br><br>
+              The syllabus for GATE CS includes:
+              <br>• <strong>Engineering Mathematics</strong> (Linear Algebra, Calculus, Probability, Discrete Mathematics)
+              <br>• <strong>Digital Logic & Computer Architecture</strong> (Pipelines, Cache, Memory Hierarchy)
+              <br>• <strong>Programming & Data Structures</strong> (C, Recursion, Trees, Graphs, Heaps)
+              <br>• <strong>Algorithms</strong> (Asymptotic analysis, Dynamic Programming, Greedy)
+              <br>• <strong>Theory of Computation & Compilers</strong> (Automata, Grammars, Parsing)
+              <br>• <strong>Operating Systems</strong> (Processes, Deadlocks, Memory Management)
+              <br>• <strong>Databases & Computer Networks</strong> (SQL, Normalization, TCP/UDP, Routing)
               <br>
               <span class="source-chip">Source: Retrieved from Uploaded Knowledge Document</span>
             </div>
@@ -397,7 +556,180 @@ Senior Software Engineer | CloudTech Solutions (2022 - Present)
       </div>
     </section>
 
+    <!-- =========================================================================
+         Module 5: EEDI Data & Trainer Hub (Roles, Question Bank, Rules & Student Data)
+         ========================================================================= -->
+    <section class="module-section" id="module-trainer-hub">
+      <div class="section-header">
+        <div class="header-badge">AI Model Preparation & Governance Hub</div>
+        <h2 class="section-title">EEDI Data & Trainer Management Hub</h2>
+        <p class="section-subtitle">Manage structured Role & Job Description datasets, curated Question Banks with Expected Answers, configure EEDI Parameter Scoring Rules, and review Real Student Data for AI model improvement.</p>
+      </div>
+
+      <!-- Hub Sub-Navigation Pills -->
+      <div class="hub-subnav">
+        <button class="hub-subnav-btn active" data-subpanel="panel-student-data">
+          <span>👥</span> Real Student Submissions Log (<span id="hub-student-count">2</span>)
+        </button>
+        <button class="hub-subnav-btn" data-subpanel="panel-roles">
+          <span>💼</span> Role & JD Catalog (6 Roles)
+        </button>
+        <button class="hub-subnav-btn" data-subpanel="panel-questions">
+          <span>❓</span> Question Bank & Expected Key Points
+        </button>
+        <button class="hub-subnav-btn" data-subpanel="panel-rules">
+          <span>⚙️</span> EEDI Scoring Rules & Weightages
+        </button>
+      </div>
+
+      <!-- Subpanel 1: Real Student Submissions Log (Requirement 6) -->
+      <div class="hub-subpanel active" id="panel-student-data">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 class="card-title" style="margin-bottom:0.25rem;"><span>📊</span> Collected Student Submissions & AI Evaluations</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Real submissions collected from live evaluations. Trainers can inspect, verify scores, and export datasets to fine-tune AI models.</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="btn-secondary" id="btn-export-json"><span>📥</span> Export JSON</button>
+              <button class="btn-secondary" id="btn-export-csv"><span>📊</span> Export CSV</button>
+              <button class="action-btn-sm" id="btn-clear-student-data" style="color:#b91c1c;">Clear Logs</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table" id="student-data-table">
+            <thead>
+              <tr>
+                <th>ID & Time</th>
+                <th>Student / Role</th>
+                <th>Diagnostic Question</th>
+                <th>Overall Score</th>
+                <th>EEDI Breakdown</th>
+                <th>Trainer Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="student-data-tbody">
+              <!-- Dynamically populated from RealStudentDataManager -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Subpanel 2: Role & JD Catalog (Requirement 1) -->
+      <div class="hub-subpanel" id="panel-roles">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="card-title"><span>📋</span> Standardized Role & Job Description (JD) Catalog</h3>
+          <p style="font-size:0.82rem; color:var(--text-muted);">Defines realistic Role titles, experience requirements, technology stacks, core responsibilities, and essential skills for strict AI alignment.</p>
+        </div>
+
+        <div class="grid-2col" id="hub-roles-cards-container">
+          <!-- Populated from ROLES_DATABASE -->
+        </div>
+      </div>
+
+      <!-- Subpanel 3: Question Bank & Expected Key Points (Requirements 2 & 3) -->
+      <div class="hub-subpanel" id="panel-questions">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 class="card-title" style="margin-bottom:0.25rem;"><span>❓</span> Structured Question Bank & Expected Answers</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Categorized by Technical, HR/Behavioral, and Scenario questions with clear Expected Answers, Key Concepts, and Penalty criteria.</p>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <select class="form-input" id="hub-question-filter-role" style="font-size:0.8rem; padding:0.4rem 0.75rem; width:220px;">
+                <option value="all">All Job Roles</option>
+                <option value="data-science-ai">Data Science & AI</option>
+                <option value="senior-python-backend">Python Backend</option>
+                <option value="devops-cloud">DevOps & Cloud</option>
+                <option value="frontend-react">Frontend React</option>
+                <option value="fullstack-web">Full Stack Web</option>
+                <option value="cyber-security">Cybersecurity</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="hub-questions-container" style="display:flex; flex-direction:column; gap:1rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Subpanel 4: EEDI Scoring Rules & Weightages (Requirements 4 & 5) -->
+      <div class="hub-subpanel" id="panel-rules">
+        <div class="card">
+          <h3 class="card-title"><span>⚖️</span> EEDI Evaluation Parameter Weights & Scoring Engine</h3>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+            The EEDI Score Engine evaluates learner responses across 5 distinct dimensions and calculates the overall score according to predefined parameter weights. Adjust the sliders below to customize weight distributions for specialized training cohorts.
+          </p>
+
+          <div style="max-width: 650px;">
+            <div class="weight-slider-row">
+              <span class="weight-label">Technical Knowledge:</span>
+              <input type="range" class="weight-slider" id="weight-slider-technical" min="10" max="60" value="30">
+              <span class="weight-val" id="weight-display-technical">30%</span>
+            </div>
+
+            <div class="weight-slider-row">
+              <span class="weight-label">Problem Solving:</span>
+              <input type="range" class="weight-slider" id="weight-slider-problemSolving" min="10" max="50" value="25">
+              <span class="weight-val" id="weight-display-problemSolving">25%</span>
+            </div>
+
+            <div class="weight-slider-row">
+              <span class="weight-label">Communication:</span>
+              <input type="range" class="weight-slider" id="weight-slider-communication" min="5" max="40" value="20">
+              <span class="weight-val" id="weight-display-communication">20%</span>
+            </div>
+
+            <div class="weight-slider-row">
+              <span class="weight-label">Critical Thinking:</span>
+              <input type="range" class="weight-slider" id="weight-slider-criticalThinking" min="5" max="30" value="15">
+              <span class="weight-val" id="weight-display-criticalThinking">15%</span>
+            </div>
+
+            <div class="weight-slider-row">
+              <span class="weight-label">Professionalism:</span>
+              <input type="range" class="weight-slider" id="weight-slider-professionalism" min="5" max="25" value="10">
+              <span class="weight-val" id="weight-display-professionalism">10%</span>
+            </div>
+
+            <div style="margin-top:1.25rem; display:flex; justify-content:space-between; align-items:center; padding:0.75rem 0; border-top:2px solid var(--border-medium);">
+              <span style="font-weight:700;">Total Weight:</span>
+              <span id="weight-total-display" style="font-family:var(--font-mono); font-weight:800; font-size:1.1rem; color:#15803d;">100%</span>
+            </div>
+
+            <div style="margin-top:1.25rem; display:flex; gap:0.75rem;">
+              <button class="btn-primary" id="btn-save-weights" style="width:auto; padding:0.6rem 1.5rem;">Save Custom Weights</button>
+              <button class="btn-secondary" id="btn-reset-weights">Reset to Standard EEDI Rules</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- Trainer Verification Modal -->
+  <div class="modal-backdrop" id="trainer-verify-modal">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="card-title" style="margin: 0;"><span>👨‍🏫</span> Trainer Submission Verification</h3>
+        <button class="modal-close-btn" id="close-verify-modal-btn">&times;</button>
+      </div>
+
+      <div id="verify-modal-content" style="max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
+        <!-- Filled dynamically -->
+      </div>
+
+      <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button class="btn-secondary" id="cancel-verify-btn">Cancel</button>
+        <button class="btn-primary" id="save-verify-btn" style="width: auto; padding: 0.6rem 1.5rem;">Approve & Save Verification</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Settings Modal (Configure Tokens) -->
   <div class="modal-backdrop" id="settings-modal">
@@ -429,9 +761,11 @@ Senior Software Engineer | CloudTech Solutions (2022 - Present)
 
   <!-- Footer -->
   <footer class="footer">
-    <p>© 2026 Agentic AI Suite • Deployable on Cloudflare Pages • Powered by LangGraph & Llama 3.3</p>
+    <p>© 2026 Agentic AI Suite • Deployable on Cloudflare Pages • Powered by EEDI Evaluation Engine & LangGraph</p>
   </footer>
 
+  <!-- Core Data & Application Scripts -->
+  <script src="roles_data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
